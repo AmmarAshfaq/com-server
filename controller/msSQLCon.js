@@ -18,12 +18,9 @@ class MsSQLCon {
                     return throwError(res, { message: err.message })
                 }
                 else {
-                    // console.log(recordset);
-                    // console.log(recordset)
                     return res.json({ sqlData: recordset })
 
                 }
-                // console.log(values)
 
 
                 connection.close();
@@ -35,10 +32,10 @@ class MsSQLCon {
 
     static async storeData(req, res) {
         // console.log(values, "jhdajdhjadhjahdjash")
-        console.log(req.body,'daatttttttttttttt')
+        console.log(req.body, 'daatttttttttttttt')
         let data = JSON.parse(JSON.stringify(req.body.sqlData))
         const account = await web3.eth.getAccounts();
-        console.log(data,'parseeeeeeeeeeeeeeeeeeeeeeeee')
+        console.log(data, 'parseeeeeeeeeeeeeeeeeeeeeeeee')
         console.log(account, "jdskfjskjfksdjfksjdkfjsdkfjsdkfjksdjfksdjk")
         try {
             if (data !== null) {
@@ -50,6 +47,7 @@ class MsSQLCon {
                             gas: 3000000,
                             from: account[0]
                         });
+                    return res.json({ data: 'Data Submit Successfully' })
                 })
             }
         } catch (err) {

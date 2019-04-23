@@ -51,6 +51,7 @@ app.post('/fetchAssetSearch', (req, res) => {
     console.log(req.body)
     ContractApi.fetchBySKU(req, res);
 })
-server.listen(app.get('port'), '10.0.0.186' || 'localhost', () => {
+server.listen(app.get('port'), () => {
     console.log('server is running on port 8080');
 });
+// , '10.0.0.186' || 'localhost'

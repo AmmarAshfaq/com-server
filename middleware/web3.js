@@ -10,13 +10,13 @@ if (typeof window !== 'undefined' && typeof window.web3 !== 'undefined') {
     //     'https://rinkeby.infura.io/4GmvurAJpAXENhCclUpY'
 
     // )
-    // const provider = new HDWalletProvider(
-    //     'lady slight floor fringe public opinion good work smart excess bachelor quantum',
-    //     'https://rinkeby.infura.io/4GmvurAJpAXENhCclUpY'
-    // );
+    const provider = new HDWalletProvider(
+        'lady slight floor fringe public opinion good work smart excess bachelor quantum',
+        'https://rinkeby.infura.io/4GmvurAJpAXENhCclUpY'
+    );
 
-    // web3 = new Web3(provider);
-    web3 = new Web3(new Web3.providers.HttpProvider("http://111.235.250.31:80"))
+    web3 = new Web3(provider);
+    // web3 = new Web3(new Web3.providers.HttpProvider("http://111.235.250.31:80"))
 }
 // console.log(web3,"ammar")
 //   web3.
