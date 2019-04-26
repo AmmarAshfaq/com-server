@@ -3,6 +3,8 @@ var web3 = require('../middleware/web3');
 var Test = require('../middleware/Test');
 var dbConfig = require('../dbonfig/msSQL');
 let throwError = require('../middleware/errorMiddleware')
+var fs = require('fs');
+
 
 
 class MsSQLCon {
@@ -18,6 +20,11 @@ class MsSQLCon {
                     return throwError(res, { message: err.message })
                 }
                 else {
+
+                    fs.writeFile('sqlData.json',JSON.stringify(recordset),function(err){
+                        if(err) throw err;
+                        console.log('File is created')
+                    })
                     return res.json({ sqlData: recordset })
 
                 }
