@@ -4,8 +4,8 @@ var Test = require('../middleware/Test');
 var dbConfig = require('../dbonfig/msSQL');
 let throwError = require('../middleware/errorMiddleware')
 var fs = require('fs');
-
-
+var pathFile = require('../DbFiles/sqlData.json');
+var ipfs = require('../middleware/ipfs');
 
 class MsSQLCon {
     static async getData(req, res) {
@@ -21,8 +21,8 @@ class MsSQLCon {
                 }
                 else {
 
-                    fs.writeFile('sqlData.json',JSON.stringify(recordset),function(err){
-                        if(err) throw err;
+                    fs.writeFile('sqlData.json', JSON.stringify(recordset), function (err) {
+                        if (err) throw err;
                         console.log('File is created')
                     })
                     return res.json({ sqlData: recordset })
@@ -40,33 +40,65 @@ class MsSQLCon {
     static async storeData(req, res) {
         // console.log(values, "jhdajdhjadhjahdjash")
         console.log(req.body, 'daatttttttttttttt')
-        let data = JSON.parse(JSON.stringify(req.body.sqlData))
-        const account = await web3.eth.getAccounts();
-        console.log(data, 'parseeeeeeeeeeeeeeeeeeeeeeeee')
-        console.log(account, "jdskfjskjfksdjfksjdkfjsdkfjsdkfjksdjfksdjk")
+        // convert file into buffer 
+        //////////////////////////////////////////////////  connection with ipfs/////////////////////////
+
+        const buffer = Buffer.from(JSON.stringify(pathFile));
+        console.log(buffer)
         try {
-            if (data !== null) {
-                // console.log(data, "xxxxxxxxxxxxxxxxxxxx")
-                data.recordset.map(async (item, ) => {
-                    console.log(item)
-                    await Test.methods.setValues(item.FirstName, item.LastName, item.Address, item.City)
-                        .send({
-                            gas: 3000000,
-                            from: account[0]
-                        });
-                    return res.json({ data: 'Data Submit Successfully' })
+            ipfs.files.add(buffer, async (err, result) => {
+                if (err) {
+                    console.error(err, 'show err')
+                    return
+                }
+                console.log(result[0].hash)
+                const account = await web3.eth.getAccounts();
+                console.log(account[3])
+                let hashFetch = await Test.methods.set(result[0].hash).send({
+                    from: account[3]
                 })
-            }
+                console.log(hashFetch, 'b h')
+                return res.json({ data: hashFetch, result: 'Data Submit Successfully' })
+            })
         } catch (err) {
             return throwError(res, { message: err.message })
         }
+        //////////////////////////////////////////////////  connection with ipfs/////////////////////////
+
+
+        ////////////////////////////////////////////////// sql direct connection /////////////////////////
+
+
+        ////////////////////////////////////////////////// sql direct connection /////////////////////////
+        // let data = JSON.parse(JSON.stringify(req.body.sqlData))
+        // const account = await web3.eth.getAccounts();
+        // console.log(data, 'parseeeeeeeeeeeeeeeeeeeeeeeee')
+        // console.log(account, "jdskfjskjfksdjfksjdkfjsdkfjsdkfjksdjfksdjk")
+        // try {
+        //     if (data !== null) {
+        //         // console.log(data, "xxxxxxxxxxxxxxxxxxxx")
+        //         data.recordset.map(async (item, ) => {
+        //             console.log(item)
+        //             await Test.methods.setValues(item.FirstName, item.LastName, item.Address, item.City)
+        //                 .send({
+        //                     gas: 3000000,
+        //                     from: account[0]
+        //                 });
+        //             return res.json({ data: 'Data Submit Successfully' })
+        //         })
+        //     }
+        // } catch (err) {
+        //     return throwError(res, { message: err.message })
+        // }
+        ////////////////////////////////////////////////// sql direct connection /////////////////////////
+
     }
 
 
     static async getDataFromBlockchain(req, res) {
-        const result = await Test.methods.getValues().call()
-        console.log(result)
-        res.json({ result: result })
+        let hashGet = await Test.methods.get().call()
+        console.log('ipfsHash', hashGet)
+        res.json({ result: hashGet })
     }
 }
 
