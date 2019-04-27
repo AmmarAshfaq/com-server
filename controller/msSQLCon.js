@@ -1,14 +1,39 @@
 var sql = require('mssql/msnodesqlv8');
 var web3 = require('../middleware/web3');
 var Test = require('../middleware/Test');
-var dbConfig = require('../dbonfig/msSQL');
+// var dbConfig = require('../dbonfig/msSQL');
 let throwError = require('../middleware/errorMiddleware')
 var fs = require('fs');
 var pathFile = require('../DbFiles/sqlData.json');
 var ipfs = require('../middleware/ipfs');
-
+let dbConfig = {};
 class MsSQLCon {
+    static connectWithDB(req, res) {
+        console.log(req.body,'data comming')
+        
+        if (req.body.serverName !== "") {
+        console.log(req.body,'data comming')
+
+            dbConfig = {
+                server: req.body.serverName,
+                user: req.body.user,
+                pasword: req.body.password,
+                database: req.body.database,
+                driver: "msnodesqlv8",
+                port: 1433,
+                options: {
+                    encrypt: false,
+                    trustedConnection: true,
+                    useUTC: true
+                }
+            }
+            return res.json({ connectSuccessfull: 'Connect Successfully' })
+        } else {
+            return throwError(res, { message: "Please check your provided detail is correct or not" })
+        }
+    }
     static async getData(req, res) {
+        console.log(dbConfig)
         var connection = await new sql.ConnectionPool(dbConfig);
         connection.connect(async function (err) {
             if (err) {

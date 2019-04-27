@@ -9,7 +9,7 @@ var web3 = require('./middleware/web3');
 var Test = require('./middleware/Test');
 
 
-const dbConfig = require('./dbonfig/msSQL');
+// const dbConfig = require('./dbonfig/msSQL');
 let ContractApi = require('./controller/ContractApi')
 let SQLConn = require('./controller/msSQLCon');
 app.set('port', process.env.PORT || 8080);
@@ -25,6 +25,14 @@ app.use(cors());
 async function getData() {
 
 }
+/// connect with SQL Data /////
+
+app.post('/connectWithDatabase', (req, res) => {
+    SQLConn.connectWithDB(req,res);
+})
+
+
+
 // fetch SQL DATA
 app.get('/fetchSQLData', (req, res) => {
     // console.log(req)
